@@ -15,8 +15,8 @@ Custom_CPU::Custom_CPU(int *pe) {
 		exit(1);
 	}
 	// Init register
-	reg.pc = (char*)pe;
-	reg.sp = (GR*)stack;
+	reg.pc = (PR)pe;
+	reg.sp = (PR)stack;
 	reg.eax = 0;
 	reg.ebx = 0;
 }

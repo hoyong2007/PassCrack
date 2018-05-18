@@ -202,27 +202,27 @@ void Custom_CPU::_mov(OPERAND op1, OPERAND op2)
 		break;
 	case SP:
 		if (op2 == EAX)
-			reg.sp = (GR*)reg.eax;
+			reg.sp = (PR)reg.eax;
 		else if (op2 == EBX)
-			reg.sp = (GR*)reg.ebx;
+			reg.sp = (PR)reg.ebx;
 		else if (op2 == SP)
 			reg.sp = reg.sp;
 		else if (op2 == PC)
-			reg.sp = (GR*)reg.pc;
+			reg.sp = reg.pc;
 		else
-			reg.sp = (GR*)op2;
+			reg.sp = (PR)op2;
 		break;
 	case PC:
 		if (op2 == EAX)
-			reg.pc = (char*)reg.eax;
+			reg.pc = (PR)reg.eax;
 		else if (op2 == EBX)
-			reg.pc = (char*)reg.ebx;
+			reg.pc = (PR)reg.ebx;
 		else if (op2 == SP)
-			reg.pc = (char*)reg.sp;
+			reg.pc = reg.sp;
 		else if (op2 == PC)
 			reg.pc = reg.pc;
 		else
-			reg.pc = (char*)op2;
+			reg.pc = (PR)op2;
 		break;
 	default:
 		printf("Something Wrong in _mov\n");
@@ -323,11 +323,11 @@ void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 	case BIG:
 		if (reg.zf == BIG) {
 			if (op2 == EAX)
-				reg.pc = (char*)reg.eax;
+				reg.pc = (PR)reg.eax;
 			else if (op2 == EBX)
-				reg.pc = (char*)reg.ebx;
+				reg.pc = (PR)reg.ebx;
 			else if (op2 == SP)
-				reg.pc = (char*)reg.sp;
+				reg.pc = reg.sp;
 			else if (op2 == PC)
 				reg.pc = reg.pc;
 		}
@@ -335,11 +335,11 @@ void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 	case EQL:
 		if (reg.zf == EQL) {
 			if (op2 == EAX)
-				reg.pc = (char*)reg.eax;
+				reg.pc = (PR)reg.eax;
 			else if (op2 == EBX)
-				reg.pc = (char*)reg.ebx;
+				reg.pc = (PR)reg.ebx;
 			else if (op2 == SP)
-				reg.pc = (char*)reg.sp;
+				reg.pc = reg.sp;
 			else if (op2 == PC)
 				reg.pc = reg.pc;
 		}
@@ -347,11 +347,11 @@ void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 	case SML:
 		if (reg.zf == SML) {
 			if (op2 == EAX)
-				reg.pc = (char*)reg.eax;
+				reg.pc = (PR)reg.eax;
 			else if (op2 == EBX)
-				reg.pc = (char*)reg.ebx;
+				reg.pc = (PR)reg.ebx;
 			else if (op2 == SP)
-				reg.pc = (char*)reg.sp;
+				reg.pc = reg.sp;
 			else if (op2 == PC)
 				reg.pc = reg.pc;
 		}
@@ -359,11 +359,11 @@ void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 	case JBE:
 		if (reg.zf == JBE) {
 			if (op2 == EAX)
-				reg.pc = (char*)reg.eax;
+				reg.pc = (PR)reg.eax;
 			else if (op2 == EBX)
-				reg.pc = (char*)reg.ebx;
+				reg.pc = (PR)reg.ebx;
 			else if (op2 == SP)
-				reg.pc = (char*)reg.sp;
+				reg.pc = reg.sp;
 			else if (op2 == PC)
 				reg.pc = reg.pc;
 		}
@@ -371,22 +371,22 @@ void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 	case JSE:
 		if (reg.zf == JSE) {
 			if (op2 == EAX)
-				reg.pc = (char*)reg.eax;
+				reg.pc = (PR)reg.eax;
 			else if (op2 == EBX)
-				reg.pc = (char*)reg.ebx;
+				reg.pc = (PR)reg.ebx;
 			else if (op2 == SP)
-				reg.pc = (char*)reg.sp;
+				reg.pc = reg.sp;
 			else if (op2 == PC)
 				reg.pc = reg.pc;
 		}
 		break;
 	case ANW:
 		if (op2 == EAX)
-			reg.pc = (char*)reg.eax;
+			reg.pc = (PR)reg.eax;
 		else if (op2 == EBX)
-			reg.pc = (char*)reg.ebx;
+			reg.pc = (PR)reg.ebx;
 		else if (op2 == SP)
-			reg.pc = (char*)reg.sp;
+			reg.pc = reg.sp;
 		else if (op2 == PC)
 			reg.pc = reg.pc;
 		break;
@@ -534,7 +534,7 @@ void Custom_CPU::_pop(OPERAND op1)
 		reg.sp -= 4;
 		break;
 	case SP:
-		reg.sp = (GR*)*reg.sp;
+		reg.sp = (PR)*reg.sp;
 		reg.sp -= 4;
 		break;
 	case PC:

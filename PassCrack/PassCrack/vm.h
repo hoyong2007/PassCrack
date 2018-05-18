@@ -1,39 +1,40 @@
-#define ADD 0x1
-#define SUB 0x2
-#define XOR 0x3
-#define CMP 0x4
-#define MOV 0x5
-#define JMP 0x6
+#define ADD  0x1
+#define SUB  0x2
+#define XOR  0x3
+#define CMP  0x4
+#define MOV  0x5
+#define JMP  0x6
 #define LOAD 0x7
 #define STOR 0x8
-#define POP 0x9
+#define POP  0x9
 #define PUSH 0xA
-#define RET 0xFF
+#define RET  0xFF
 
 #define EAX 0xFF
 #define EBX 0xFE
-#define PC	0xFD
-#define SP	0xFC
+#define PC  0xFD
+#define SP  0xFC
 
 #define BIG 0x1
-#define EQL	0x2
-#define SML	0X4
+#define EQL 0x2
+#define SML 0X4
 #define ANW 0x8
 
 #define JBE BIG+EQL
 #define JSE SML+EQL
 
 typedef unsigned int GR;	// General Register
+typedef char* PR;
 typedef char FR;			// Flag Register
 typedef unsigned int OPERAND;
 typedef char OPCODE;
 
 typedef struct reg {
-	char* pc;
-	GR	*sp;
-	GR	eax;
-	GR	ebx;
-	FR	zf;
+	PR pc;
+	PR sp;
+	GR eax;
+	GR ebx;
+	FR zf;
 } REG;
 
 
