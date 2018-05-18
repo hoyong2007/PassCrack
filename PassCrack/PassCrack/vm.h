@@ -40,7 +40,8 @@ typedef struct reg {
 
 class Custom_CPU {
 private:
-	void *stack;
+	void *stack_top;
+	void *stack_bot;
 	REG reg;
 
 	void _add(OPERAND op1, OPERAND op2);

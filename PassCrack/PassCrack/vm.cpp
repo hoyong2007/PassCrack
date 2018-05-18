@@ -9,14 +9,15 @@ Constructor
   - Custom stack's bottom == buffer
 */
 Custom_CPU::Custom_CPU(int *pe) {
-	stack = (void*)_aligned_malloc(0x2000, 4);	
+	stack_top = (void*)_aligned_malloc(0x2000, 4);	
+	stack_bot = stack_top + 0x2000;
 	if (stack == NULL) {
 		printf("Buffer allocate Error!\n");
 		exit(1);
 	}
 	// Init register
 	reg.pc = (PR)pe;
-	reg.sp = (PR)stack;
+	reg.sp = (PR)stack_bot;
 	reg.eax = 0;
 	reg.ebx = 0;
 }
