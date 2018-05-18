@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include "vm.h"
 
 char key1[128] = {
     0x5A,0x6D,0x36,0x1B,0x0D,0x06,0x03,0x41,
@@ -46,6 +47,82 @@ char key2[128] = {
     0x19,0x9F,0x14,0x92,0x03,0x85,0x0E,0x88,
     0x2D,0xAB,0x20,0xA6,0x37,0xB1,0x3A,0xBC
 };
+
+void custom_table_encode(char *s)
+{
+	for (int i = 0; i<strlen(s); i++)
+	{
+		if (s[i] >= '0' && s[i] <= '9')//숫자
+		{
+			s[i] = (s[i] % 16) + 1;
+			printf("%x ",s[i]);
+		}	
+		else if (s[i] >= 'a' && s[i] <= 'o')//영어 소문자  
+		{
+			s[i] = (s[i] % 16) + 0x30;
+			printf("%x ",s[i]);
+		}	
+		else if (s[i] >= 'p' && s[i] <= 'z')//영어 소문자  
+		{
+			s[i] = (s[i] % 16) + 0x40;
+			printf("%x ",s[i]);
+		}
+		else if (s[i] >= 'A' && s[i] <= 'O')//영어 대문자 
+		{
+			s[i] = (s[i] % 16) + 0x10;
+			printf("%x ",s[i]);
+		}
+		else if (s[i] >= 'P' && s[i] <= 'Z')//영어 대문자
+		{
+			s[i] = (s[i] % 16) + 0x20;
+			printf("%x ",s[i]);	
+		}
+		else if (s[i] == '<' || s[i] == '>' || s[i] == '?') //특수문자 
+		{
+			s[i] = s[i] % 16;
+			printf("%x ",s[i]);	
+		}	
+		else if(s[i] == '!')
+		{
+			s[i] = 0xb;
+			printf("%x ",s[i]);	
+		}
+		else if(s[i] == '_')
+		{
+			s[i] = 0xd;
+			printf("%x ",s[i]);	
+		}
+	}
+}
+
+void custom_table_decode(char *s)
+{
+	printf("\n\n ascii\n");
+	for (int i = 0; i<strlen(s); i++)
+	{
+		if (s[i] >= 0x1 && s[i] <= 0xa)//숫자
+		{
+			s[i] = s[i] + 0x30 - 1;
+			printf("%x ",s[i]);
+		}	
+		//특문 처리 
+		else if(s[i] == 0xb)
+		{
+			s[i] = 0x21;
+			printf("%x ",s[i]);
+		}
+		else if(s[i] == 0xd)
+		{
+			s[i] = 0x5F;
+			printf("%x ",s[i]);
+		}
+		else//영어 + 일부 특문 
+		{
+			s[i] = s[i] + 0x30;
+			printf("%x ",s[i]);
+		}	
+	}
+}
 
 
 void crypt(char *s,char *es, int len) 
@@ -148,7 +225,8 @@ int main()
 	{
 		random_str[i] = rand() % 128;
 	}
-
+	
+	custom_table_encode(str);
 	crypt(str,random_str,pass_len);
 	
 	printf("\nEnc STR\n");
@@ -159,6 +237,7 @@ int main()
 	printf("\n\n");
 	
 	decrypt(str,pass_len);
+	custom_table_decode(str);
 	
 	printf("DEC STR\n%s",str);
 	
