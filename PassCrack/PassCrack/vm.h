@@ -58,6 +58,6 @@ private:
 public:
 	Custom_CPU();
 	~Custom_CPU();
-	int execute(int *pe);
+	int execute(void *pe);
 	GR get_result();
 };

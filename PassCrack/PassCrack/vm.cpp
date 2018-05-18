@@ -30,14 +30,14 @@ execute()
  - every inst & operand is 1byte each
  - terminate when reg.PC reaches to RET instruction
 */
-int Custom_CPU::execute(int *pe)
+int Custom_CPU::execute(void *pe)
 {
 	OPCODE inst;
 	OPERAND arg1 = 0, arg2 = 0;
 
 	if (pe == NULL) {
 		printf("Need Bytecode\n");
-		return ;
+		return 0;
 	}
 
 	reg.pc = (PR)pe;
