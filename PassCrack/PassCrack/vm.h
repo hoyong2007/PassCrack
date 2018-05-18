@@ -56,8 +56,8 @@ private:
 	void _push(OPERAND op1);
 			
 public:
-	Custom_CPU(int *pe);
+	Custom_CPU();
 	~Custom_CPU();
-	int execute();
-
+	int execute(int *pe);
+	GR get_result();
 };

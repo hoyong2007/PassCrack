@@ -18,36 +18,6 @@ int find() // find password.txt
 		fclose(f);
 		return 1; // password.txt already exist -> main function progress
 	}
-
-	/* --> file name search algorithm for find password.txt (long ver.)
-
-	struct _finddata_t fd;
-	long handle;
-	int result = 1;
-
-	char buf[100];
-	getcwd(buf, 100);
-
-	handle = _findfirst("*.txt",&fd);
-
-	if(handle == -1){
-	printf("error1\n");
-	return 0;
-	}
-
-	while(result != -1){
-	if(fd.name == "password.txt"){
-	printf("file already exist\n");
-	return 0;
-	}
-	else{
-	printf("place for init()\n");
-	return 1;
-	}
-	result = _findnext(handle,&fd);
-	}
-	return 0;
-	*/
 }
 
 void init() //초기 암호파일 생성 
@@ -86,25 +56,19 @@ int auth_rule(char *s)
 	int b = 0;
 	int c = 0;
 
-	//   printf("DBG %s\n",s);
-
 	for (int i = 0; i<strlen(s); i++)
 	{
-
-		if (s[i] >= 48 && s[i] <= 57)//숫자
+		if (s[i] >= '0' && s[i] <= '9')//숫자
 			a++;
-
-		else if (s[i] >= 97 && s[i] <= 122)//영어 소문자 
+		else if (s[i] >= 'a' && s[i] <= 'z')//영어 소문자 
 			b++;
-
-		else if (s[i] >= 65 && s[i] <= 90)//영어 대문자 
+		else if (s[i] >= 'A' && s[i] <= 'Z')//영어 대문자 
 			b++;
-
-		else if (s[i] == 60 || s[i] == 62 || s[i] == 63 || s[i] == 21 || s[i] == 95) //특수문자 
+		else if (s[i] == '<' || s[i] == '>' || s[i] == '?' || s[i] == '!' || s[i] == '_') //특수문자 
 			c++;
 	}
 
-	if (a>0 && b>0 && c>0 && strlen(s) >= 8)
+	if (a && b && c && strlen(s)>=8)
 		return 1;
 	else
 		return 0;

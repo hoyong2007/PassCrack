@@ -534,7 +534,7 @@ void Custom_CPU::_pop(OPERAND op1)
 		reg.sp -= 4;
 		break;
 	case SP:
-		reg.sp = (PR)*reg.sp;
+		reg.sp = (char*)*reg.sp;
 		reg.sp -= 4;
 		break;
 	case PC:

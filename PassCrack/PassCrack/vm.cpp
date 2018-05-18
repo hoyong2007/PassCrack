@@ -8,28 +8,20 @@ Constructor
   - after allocation, initialize reg
   - Custom stack's bottom == buffer
 */
-Custom_CPU::Custom_CPU(int *pe) {
+Custom_CPU::Custom_CPU() {
 	stack_top = (void*)_aligned_malloc(0x2000, 4);	
-	stack_bot = stack_top + 0x2000;
-	if (stack == NULL) {
+	stack_bot = (PR)((GR)stack_top + 0x2000);
+	if (stack_top == NULL) {
 		printf("Buffer allocate Error!\n");
 		exit(1);
 	}
 	// Init register
-	reg.pc = (PR)pe;
+	reg.pc = 0;
 	reg.sp = (PR)stack_bot;
 	reg.eax = 0;
 	reg.ebx = 0;
 }
 
-/*
-Destructor
- - free allocated memory (stack)
-*/
-Custom_CPU::~Custom_CPU() {
-	_aligned_free(stack);
-	stack = NULL;
-}
 
 
 /*
@@ -38,10 +30,17 @@ execute()
  - every inst & operand is 1byte each
  - terminate when reg.PC reaches to RET instruction
 */
-int Custom_CPU::execute()
+int Custom_CPU::execute(int *pe)
 {
 	OPCODE inst;
 	OPERAND arg1 = 0, arg2 = 0;
+
+	if (pe == NULL) {
+		printf("Need Bytecode\n");
+		return ;
+	}
+
+	reg.pc = (PR)pe;
 
 	while (1) {
 		inst = *(reg.pc++);
@@ -94,4 +93,26 @@ int Custom_CPU::execute()
 			break;
 		}
 	}
+}
+
+
+/*
+ - return result value
+ - result will be stored in EAX
+ - Validate	-> return 1 or 2
+ - Change	-> return 0 if false || return ptr to enc_passwd
+*/
+GR Custom_CPU::get_result()
+{
+	return reg.eax;
+}
+
+
+/*
+Destructor
+- free allocated memory (stack)
+*/
+Custom_CPU::~Custom_CPU() {
+	_aligned_free(stack_top);
+	stack_top = NULL;
 }
