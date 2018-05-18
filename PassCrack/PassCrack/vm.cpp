@@ -16,7 +16,7 @@ Custom_CPU::Custom_CPU(int *pe) {
 	}
 	// Init register
 	reg.pc = (char*)pe;
-	reg.sp = (char*)stack;
+	reg.sp = (GR*)stack;
 	reg.eax = 0;
 	reg.ebx = 0;
 }
@@ -39,7 +39,7 @@ execute()
 */
 int Custom_CPU::execute()
 {
-	OPCODE inst = *(reg.pc++);
+	OPCODE inst;
 	OPERAND arg1 = 0, arg2 = 0;
 
 	while (1) {
@@ -73,7 +73,8 @@ int Custom_CPU::execute()
 			break;
 		case JMP:
 			arg1 = *(reg.pc++);
-			Custom_CPU::_jmp(arg1);
+			arg2 = *(reg.pc++);
+			Custom_CPU::_jmp(arg1, arg2);
 			break;
 		case POP:
 			arg1 = *(reg.pc++);
