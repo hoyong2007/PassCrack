@@ -20,6 +20,9 @@
 #define SML	0X4
 #define ANW 0x8
 
+#define JBE BIG+EQL
+#define JSE SML+EQL
+
 typedef unsigned int GR;	// General Register
 typedef char FR;			// Flag Register
 typedef unsigned int OPERAND;

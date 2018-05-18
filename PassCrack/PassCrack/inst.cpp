@@ -3,8 +3,10 @@
 
 
 /*
- - $(op1) + $(op2)
+ - op1 = op1 + op2
  - mov result to op1
+ - op1 must be a Register
+ - op2 can be a Register or 1byte data
 */
 void Custom_CPU::_add(OPERAND op1, OPERAND op2)
 {
@@ -64,8 +66,10 @@ void Custom_CPU::_add(OPERAND op1, OPERAND op2)
 
 
 /*
-- $(op1) - $(op2)
+- op1 = op1 - op2
 - mov result to op1
+- op1 must be a Register
+- op2 can be a Register or 1byte data
 */
 void Custom_CPU::_sub(OPERAND op1, OPERAND op2)
 {
@@ -125,8 +129,10 @@ void Custom_CPU::_sub(OPERAND op1, OPERAND op2)
 
 
 /*
-- $(op1) ^ $(op2)
+- op1 = op1 ^ op2
 - mov result to op1
+- op1 must be EAX or EBX
+- op2 can be a Register or 1byte data
 */
 void Custom_CPU::_xor(OPERAND op1, OPERAND op2)
 {
@@ -162,7 +168,10 @@ void Custom_CPU::_xor(OPERAND op1, OPERAND op2)
 
 
 /*
-mov $(op2) to op1
+ - op1 = op2
+ - mov op2 to op1
+ - op1 must be a Register
+ - op2 can be a Register or 1byte data
 */
 void Custom_CPU::_mov(OPERAND op1, OPERAND op2)
 {
@@ -223,64 +232,75 @@ void Custom_CPU::_mov(OPERAND op1, OPERAND op2)
 
 
 /*
- - cmp op1 to op2
- - if op1 is bigger than op2 -> zf = BIG
- - if op1 is equal to op2 -> zf = EQL
- - if op1 is smaller than op2 -> zf = SMALL
+ - cmp op1 and op2
+ - zf += BIG if op1 is bigger than op2 
+ - zf += EQL if op1 is equal to op2
+ - zf += SML if op1 is smaller than op2
+ - op1 and op2 can be a Register or 1byte data
 */
 void Custom_CPU::_cmp(OPERAND op1, OPERAND op2)
 {
 	switch (op1) {
 	case EAX:
 		if (op2 == EAX)
-			reg.zf = (reg.eax>reg.eax)<<0 | (reg.eax==reg.eax)<<1 | (reg.eax<reg.eax)<<2;
+			reg.zf = ((reg.eax>reg.eax)<<0) + ((reg.eax==reg.eax)<<1) + ((reg.eax<reg.eax)<<2);
 		else if (op2 == EBX)
-			reg.zf = (reg.eax>reg.ebx) << 0 | (reg.eax == reg.ebx) << 1 | (reg.eax<reg.ebx) << 2;
+			reg.zf = ((reg.eax>reg.ebx) << 0) + ((reg.eax == reg.ebx) << 1) + ((reg.eax<reg.ebx) << 2);
 		else if (op2 == SP)
-			reg.zf = (reg.eax>(GR)reg.sp) << 0 | (reg.eax == (GR)reg.sp) << 1 | (reg.eax<(GR)reg.sp) << 2;
+			reg.zf = ((reg.eax>(GR)reg.sp) << 0) + ((reg.eax == (GR)reg.sp) << 1) + ((reg.eax<(GR)reg.sp) << 2);
 		else if (op2 == PC)
-			reg.zf = (reg.eax>(GR)reg.pc) << 0 | (reg.eax == (GR)reg.pc) << 1 | (reg.eax<(GR)reg.pc) << 2;
+			reg.zf = ((reg.eax>(GR)reg.pc) << 0) + ((reg.eax == (GR)reg.pc) << 1) + ((reg.eax<(GR)reg.pc) << 2);
 		else
-			reg.zf = (reg.eax>op2) << 0 | (reg.eax == op2) << 1 | (reg.eax<op2) << 2;
+			reg.zf = ((reg.eax>op2) << 0) + ((reg.eax == op2) << 1) + ((reg.eax<op2) << 2);
 		break;
 	case EBX:
 		if (op2 == EAX)
-			reg.zf = (reg.ebx>reg.eax) << 0 | (reg.ebx == reg.eax) << 1 | (reg.ebx<reg.eax) << 2;
+			reg.zf = ((reg.ebx>reg.eax) << 0) + ((reg.ebx == reg.eax) << 1) + ((reg.ebx<reg.eax) << 2);
 		else if (op2 == EBX)
-			reg.zf = (reg.ebx>reg.ebx) << 0 | (reg.ebx == reg.ebx) << 1 | (reg.ebx<reg.ebx) << 2;
+			reg.zf = ((reg.ebx>reg.ebx) << 0) + ((reg.ebx == reg.ebx) << 1) + ((reg.ebx<reg.ebx) << 2);
 		else if (op2 == SP)
-			reg.zf = (reg.ebx>(GR)reg.sp) << 0 | (reg.ebx == (GR)reg.sp) << 1 | (reg.ebx<(GR)reg.sp) << 2;
+			reg.zf = ((reg.ebx>(GR)reg.sp) << 0) + ((reg.ebx == (GR)reg.sp) << 1) + ((reg.ebx<(GR)reg.sp) << 2);
 		else if (op2 == PC)
-			reg.zf = (reg.ebx>(GR)reg.pc) << 0 | (reg.ebx == (GR)reg.pc) << 1 | (reg.ebx<(GR)reg.pc) << 2;
+			reg.zf = ((reg.ebx>(GR)reg.pc) << 0) + ((reg.ebx == (GR)reg.pc) << 1) + ((reg.ebx<(GR)reg.pc) << 2);
 		else
-			reg.zf = (reg.ebx>op2) << 0 | (reg.ebx == op2) << 1 | (reg.ebx<op2) << 2;
+			reg.zf = ((reg.ebx>op2) << 0) + ((reg.ebx == op2) << 1) + ((reg.ebx<op2) << 2);
 		break;
 	case SP:
 		if (op2 == EAX)
-			reg.zf = ((GR)reg.sp>reg.eax) << 0 | ((GR)reg.sp == reg.eax) << 1 | ((GR)reg.sp<reg.eax) << 2;
+			reg.zf = (((GR)reg.sp>reg.eax) << 0) + (((GR)reg.sp == reg.eax) << 1) + (((GR)reg.sp<reg.eax) << 2);
 		else if (op2 == EBX)
-			reg.zf = ((GR)reg.sp>reg.ebx) << 0 | ((GR)reg.sp == reg.ebx) << 1 | ((GR)reg.sp<reg.ebx) << 2;
+			reg.zf = (((GR)reg.sp>reg.ebx) << 0) + (((GR)reg.sp == reg.ebx) << 1) + (((GR)reg.sp<reg.ebx) << 2);
 		else if (op2 == SP)
-			reg.zf = ((GR)reg.sp>(GR)reg.sp) << 0 | ((GR)reg.sp == (GR)reg.sp) << 1 | ((GR)reg.sp<(GR)reg.sp) << 2;
+			reg.zf = (((GR)reg.sp>(GR)reg.sp) << 0) + (((GR)reg.sp == (GR)reg.sp) << 1) + (((GR)reg.sp<(GR)reg.sp) << 2);
 		else if (op2 == PC)
-			reg.zf = ((GR)reg.sp>(GR)reg.pc) << 0 | ((GR)reg.sp == (GR)reg.pc) << 1 | ((GR)reg.sp<(GR)reg.pc) << 2;
+			reg.zf = (((GR)reg.sp>(GR)reg.pc) << 0) + (((GR)reg.sp == (GR)reg.pc) << 1) + (((GR)reg.sp<(GR)reg.pc) << 2);
 		else
-			reg.zf = ((GR)reg.sp>op2) << 0 | ((GR)reg.sp == op2) << 1 | ((GR)reg.sp<op2) << 2;
+			reg.zf = (((GR)reg.sp>op2) << 0) + (((GR)reg.sp == op2) << 1) + (((GR)reg.sp<op2) << 2);
 		break;
 	case PC:
 		if (op2 == EAX)
-			reg.zf = ((GR)reg.pc>reg.eax) << 0 | ((GR)reg.pc == reg.eax) << 1 | ((GR)reg.pc<reg.eax) << 2;
+			reg.zf = (((GR)reg.pc>reg.eax) << 0) + (((GR)reg.pc == reg.eax) << 1) + (((GR)reg.pc<reg.eax) << 2);
 		else if (op2 == EBX)
-			reg.zf = ((GR)reg.pc>reg.ebx) << 0 | ((GR)reg.pc == reg.ebx) << 1 | ((GR)reg.pc<reg.ebx) << 2;
+			reg.zf = (((GR)reg.pc>reg.ebx) << 0) + (((GR)reg.pc == reg.ebx) << 1) + (((GR)reg.pc<reg.ebx) << 2);
 		else if (op2 == SP)
-			reg.zf = ((GR)reg.pc>(GR)reg.sp) << 0 | ((GR)reg.pc == (GR)reg.sp) << 1 | ((GR)reg.pc<(GR)reg.sp) << 2;
+			reg.zf = (((GR)reg.pc>(GR)reg.sp) << 0) + (((GR)reg.pc == (GR)reg.sp) << 1) + (((GR)reg.pc<(GR)reg.sp) << 2);
 		else if (op2 == PC)
-			reg.zf = ((GR)reg.pc>(GR)reg.pc) << 0 | ((GR)reg.pc == (GR)reg.pc) << 1 | ((GR)reg.pc<(GR)reg.pc) << 2;
+			reg.zf = (((GR)reg.pc>(GR)reg.pc) << 0) + (((GR)reg.pc == (GR)reg.pc) << 1) + (((GR)reg.pc<(GR)reg.pc) << 2);
 		else
-			reg.zf = ((GR)reg.pc>op2) << 0 | ((GR)reg.pc == op2) << 1 | ((GR)reg.pc<op2) << 2;
+			reg.zf = (((GR)reg.pc>op2) << 0) + (((GR)reg.pc == op2) << 1) + (((GR)reg.pc<op2) << 2);
 		break;
 	default:
-		printf("Something Wrong in _cmp\n");
+		if (op2 == EAX)
+			reg.zf = ((op1>reg.eax) << 0) + ((op1 == reg.eax) << 1) + ((op1<reg.eax) << 2);
+		else if (op2 == EBX)
+			reg.zf = ((op1>reg.ebx) << 0) + ((op1 == reg.ebx) << 1) + ((op1<reg.ebx) << 2);
+		else if (op2 == SP)
+			reg.zf = ((op1>(GR)reg.sp) << 0) + ((op1 == (GR)reg.sp) << 1) + ((op1<(GR)reg.sp) << 2);
+		else if (op2 == PC)
+			reg.zf = ((op1>(GR)reg.pc) << 0) + ((op1 == (GR)reg.pc) << 1) + ((op1<(GR)reg.pc) << 2);
+		else
+			reg.zf = ((op1>op2) << 0) + ((op1 == op2) << 1) + ((op1<op2) << 2);
+		break;
 	}
 }
 
@@ -288,7 +308,9 @@ void Custom_CPU::_cmp(OPERAND op1, OPERAND op2)
 /*
 - jmp to op2 when Z_FLAG is $(op1)
 - jmp to op2 when op1 is ANW (Anyway)
-- PC = $(op2)
+- PC = op2
+- op1 must be a Z-Flag value (BIG, EQL, SML, JBE, JSE, ANW)
+- op2 must be a Register
 */
 void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 {
@@ -308,8 +330,6 @@ void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 				reg.pc = (char*)reg.sp;
 			else if (op2 == PC)
 				reg.pc = reg.pc;
-			else
-				reg.pc = (char*)op2;
 		}
 		break;
 	case EQL:
@@ -322,8 +342,6 @@ void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 				reg.pc = (char*)reg.sp;
 			else if (op2 == PC)
 				reg.pc = reg.pc;
-			else
-				reg.pc = (char*)op2;
 		}
 		break;
 	case SML:
@@ -336,8 +354,30 @@ void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 				reg.pc = (char*)reg.sp;
 			else if (op2 == PC)
 				reg.pc = reg.pc;
-			else
-				reg.pc = (char*)op2;
+		}
+		break;
+	case JBE:
+		if (reg.zf == JBE) {
+			if (op2 == EAX)
+				reg.pc = (char*)reg.eax;
+			else if (op2 == EBX)
+				reg.pc = (char*)reg.ebx;
+			else if (op2 == SP)
+				reg.pc = (char*)reg.sp;
+			else if (op2 == PC)
+				reg.pc = reg.pc;
+		}
+		break;
+	case JSE:
+		if (reg.zf == JSE) {
+			if (op2 == EAX)
+				reg.pc = (char*)reg.eax;
+			else if (op2 == EBX)
+				reg.pc = (char*)reg.ebx;
+			else if (op2 == SP)
+				reg.pc = (char*)reg.sp;
+			else if (op2 == PC)
+				reg.pc = reg.pc;
 		}
 		break;
 	case ANW:
@@ -349,8 +389,6 @@ void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 			reg.pc = (char*)reg.sp;
 		else if (op2 == PC)
 			reg.pc = reg.pc;
-		else
-			reg.pc = (char*)op2;
 		break;
 	default :
 		printf("Something Wrong in _jmp\n");
@@ -360,11 +398,11 @@ void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 
 
 /*
- - load data that pointed by op2 to op1
- - read only 1byte per exec
- - op1 must be EAX or EBX
- - op2 must be EAX or EBX or SP or PC
  - op1 = *(char*)op2
+ - load only 1byte per execution
+ - load data that pointed by op2
+ - op1 must be EAX or EBX
+ - op2 must be a Register
 */
 void Custom_CPU::_load(OPERAND op1, OPERAND op2)
 {
@@ -396,12 +434,12 @@ void Custom_CPU::_load(OPERAND op1, OPERAND op2)
 }
 
 
-
 /*
- - store data to *op1
- - store only byte per exec
- - op1 must be EAX or EBX
  - *(char*)op1 = op2
+ - store only 1 byte per execution
+ - store op2 to *op1
+ - op1 must be EAX or EBX or SP
+ - op2 can be a Register(it would store Reg&0xff) or 1byte data
 */
 void Custom_CPU::_stor(OPERAND op1, OPERAND op2)
 {
@@ -430,6 +468,18 @@ void Custom_CPU::_stor(OPERAND op1, OPERAND op2)
 		else
 			*(char*)reg.ebx = (char)op2;
 		break;
+	case SP:
+		if (op2 == EAX)
+			*(char*)reg.sp = (char)reg.eax;
+		else if (op2 == EBX)
+			*(char*)reg.sp = (char)reg.ebx;
+		else if (op2 == SP)
+			*(char*)reg.sp = (char)reg.sp;
+		else if (op2 == PC)
+			*(char*)reg.sp = (char)reg.pc;
+		else
+			*(char*)reg.sp = (char)op2;
+		break;
 	default:
 		printf("Something Wrong in _stor\n");
 		break;
@@ -437,28 +487,30 @@ void Custom_CPU::_stor(OPERAND op1, OPERAND op2)
 }
 
 
+
 /*
- - push $(op1) to stack
+ - push op1 to stack
+ - op1 can be a Register or 1byte data
 */
 void Custom_CPU::_push(OPERAND op1)
 {
 	GR tmp;
 	switch (op1) {
 	case EAX:
-		reg.sp += 4;
+		reg.sp -= 1;
 		*reg.sp = reg.eax;
 		break;
 	case EBX:
-		reg.sp += 4;
+		reg.sp -= 1;
 		*reg.sp = reg.eax;
 		break;
 	case SP:
 		tmp = (GR)reg.sp;
-		reg.sp += 4;
+		reg.sp -= 1;
 		*reg.sp = tmp;
 		break;
 	case PC:
-		reg.sp += 4;
+		reg.sp -= 1;
 		*reg.sp = (GR)reg.pc;
 	default:
 		printf("Something Wrong in _push\n");
@@ -489,9 +541,7 @@ void Custom_CPU::_pop(OPERAND op1)
 		reg.pc = (char*)*reg.sp;
 		reg.sp -= 4;
 	default:
-		printf("Something Wrong in _stor\n");
+		printf("Something Wrong in _pop\n");
 		break;
 	}
 }
-
-
