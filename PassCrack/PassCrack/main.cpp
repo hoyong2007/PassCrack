@@ -6,8 +6,10 @@
 #pragma warning(disable:4996)
 
 char buf_new_global[100];
+char passwd_txt[128];
+char passwd_enc[128];
 
-int find() // find password.txt 
+int is_password_exist() // find password.txt 
 {
 	FILE *f;
 	f = fopen("password.txt", "r");
@@ -20,17 +22,30 @@ int find() // find password.txt
 	}
 }
 
-void init() //초기 암호파일 생성 
+
+void load_password() //초기 암호파일 생성 
 {
+	if (is_password_exist()) {
+		FILE *f;
+		f = fopen("password.txt", "w+");
+		strcpy(passwd_txt, "sejong_security_2017!");
 
-	if (find() == 1)
-		return;
+		/*
+		enc passwd_txt
+		*/
 
-	FILE *f;
-	f = fopen("password.txt", "w+");
-	fprintf(f, "sejong_security_2017!");
-	fclose(f);
+		fprintf(f, passwd_enc);
+		fclose(f);
+	}
+	else {
+		FILE *f;
+		f = fopen("password.txt", "r");
+		fscanf(f, "%s", passwd_enc);
+		fclose(f);
+	}
+	return;
 }
+
 
 int auth_password()
 {
@@ -39,7 +54,7 @@ int auth_password()
 	char buf_get[100];
 
 	printf("input your password : ");
-	scanf("%s", buf_input);
+	scanf("%s", passwd_txt);
 
 	f = fopen("password.txt", "r+");
 	fscanf(f, "%s", buf_get);
@@ -74,9 +89,8 @@ int auth_rule(char *s)
 		return 0;
 }
 
-void validate()
+void Validate()
 {
-
 	if (auth_password() == 0) {
 		printf("Invaild password, Try again...\n");
 		return;
@@ -85,37 +99,36 @@ void validate()
 		printf("Login success\n");
 }
 
-void change()
+void Change()
 {
-
 	if (auth_password() == 0) {
 		printf("Invaild password, Try again...\n");
 		return;
 	}
 	printf("input new password : ");
 
-	scanf("%s", buf_new_global);
+	scanf("%s", passwd_txt);
 
-	if (auth_rule(buf_new_global) == 0) {
+	if (auth_rule(passwd_txt) == 0) {
 		printf("Try again, you must follow the making criteria\n\n");
 		printf("it is at least 8 characters long\n");
 		printf("it contains at least one letter\n");
 		printf("it contains at least one digit\n");
 		printf("it contains at least one of these four characters : <,>,_,?,!\n");
-		buf_new_global[0] = '\0';
+		passwd_txt[0] = '\0';
 		return;
 	}
 	return;
 }
 
-void terminate()
+void Quit()
 {
 	FILE *f;
 
 	f = fopen("password.txt", "w+");
 
-	printf("contents : %s\n", buf_new_global);
-	fprintf(f, "%s", buf_new_global);
+	printf("contents : %s\n", passwd_enc);
+	fprintf(f, "%s", passwd_enc);
 
 	fclose(f);
 	exit(0);
@@ -124,7 +137,7 @@ void terminate()
 int main()
 {
 	char cmd;
-	init();
+	load_password();
 	while (1) {
 
 		printf("Sejong Password Manager:\n\n");
@@ -137,9 +150,9 @@ int main()
 
 		switch (cmd) {
 
-		case 'A': change(); break;
-		case 'B': validate(); break;
-		case 'C': terminate(); break;
+		case 'A': Change(); break;
+		case 'B': Validate(); break;
+		case 'C': Quit(); break;
 
 		default: printf("Invaild Input, Try again…\n"); break;
 		}
