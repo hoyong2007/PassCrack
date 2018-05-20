@@ -37,6 +37,11 @@ typedef struct reg {
 	FR zf;
 } REG;
 
+/*
+extern char passwd_txt[128];
+extern char passwd_enc[128];
+extern char random_str[128];
+*/
 
 class Custom_CPU {
 private:

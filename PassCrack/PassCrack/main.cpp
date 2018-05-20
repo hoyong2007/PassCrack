@@ -1,16 +1,20 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include "vm.h"
 
 #pragma warning(disable:4996)
 
 char passwd_txt[128];
 char passwd_enc[128];
-void *CHANGE_BYTECODE = "";
-void *VALIDATE_BYTECODE = "";
+char random_str[128];
+void *CHANGE_BYTECODE = NULL;
+void *VALIDATE_BYTECODE = NULL;
 Custom_CPU *vm;
 
+int validate_();
+char* Change_();
 
 int is_password_exist() // find password.txt 
 {
@@ -31,7 +35,9 @@ void load_password() //초기 암호파일 생성
 	int status;
 	char *ret = (char*)0xDEADBEEF;
 
-	if (is_password_exist()) {
+	memset(passwd_txt, 0, 128);
+	memset(passwd_enc, 0, 128);
+	if (!is_password_exist()) {
 		FILE *f;
 		f = fopen("password", "w+");
 		strcpy(passwd_txt, "sejong_security_2017!");
@@ -95,9 +101,10 @@ void Validate()
 	int ret;
 	int status;
 
+	memset(passwd_txt, 0, 128);
 	printf("input your password : ");
 	scanf("%128s", passwd_txt);
-
+	validate_();
 	status = vm->execute(VALIDATE_BYTECODE);
 	if (!status) {
 		printf("Somehing Wrong in vm\n");
@@ -117,6 +124,7 @@ void Change()
 	int status;
 
 	while (ret) {
+		memset(passwd_txt, 0, 128);
 		printf("Input new password : ");
 		scanf("%128s", passwd_txt);
 
@@ -129,6 +137,9 @@ void Change()
 			passwd_txt[0] = '\0';
 			return;
 		}
+		Change_();
+		for (int i = 0; i<128; i++)
+			random_str[i] = rand() % 128;
 
 		status = vm->execute(CHANGE_BYTECODE);
 		if (!status) {
@@ -159,9 +170,11 @@ void Quit()
 
 int main()
 {
-	char cmd;
+	char cmd = 0;
 	load_password();
 	vm = new Custom_CPU();
+	srand(time(NULL));
+
 	while (cmd != 'C') {
 		printf("Sejong Password Manager:\n\n");
 		printf("A. Change Password\n");

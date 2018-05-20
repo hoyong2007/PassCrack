@@ -2,6 +2,10 @@
 #include <malloc.h>
 #include "vm.h"
 
+extern char passwd_txt[128];
+extern char passwd_enc[128];
+extern char random_str[128];
+
 /* 
 Constructor
   - allocate mem for Custom stack & register
@@ -41,6 +45,14 @@ int Custom_CPU::execute(void *pe)
 	}
 
 	reg.pc = (PR)pe;
+	reg.sp = (PR)stack_bot;
+
+	memcpy((char*)stack_bot - 128, passwd_txt, 128);
+	reg.sp -= 128;
+	memcpy((char*)stack_bot - 128 * 2, passwd_enc, 128);
+	reg.sp -= 128;
+	memcpy((char*)stack_bot - 128 * 1, random_str, 128);
+	reg.sp -= 128;
 
 	while (1) {
 		inst = *(reg.pc++);
