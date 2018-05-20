@@ -44,53 +44,53 @@ key2 = [
 count = 0
 tmp = 0
 
-print('mov edx, sp')
-print('xor ebx, ebx')
-print ('add ebx, 0x4')
-print('sub edx, ebx')
-print('store edx, eax')
+print('MOV edx, sp')
+print('XOR ebx, ebx')
+print('ADD ebx, 0x4')
+print('SUB edx, ebx')
+print('STORE edx, eax')
 
 #mov     mov     [ebp+var_4], eax
 
 for i in range(0x221, 0x2A0+1):
 	count = count + 1
-	print('mov eax, sp')
-	print('xor ebx, ebx')
+	print('MOV eax, sp')
+	print('XOR ebx, ebx')
 	tmp = i
 	while 1==1:
 		tmp = tmp - 0xE0
-		print ('add ebx, 0xe0')
+		print ('ADD ebx, 0xe0')
 		if tmp < 0xE0:
-			print ('add ebx,' + hex(tmp))
+			print ('ADD ebx,' + hex(tmp))
 			break
-	print('sub eax, ebx')
-	print('store eax,',hex(key1[i-0x221]))
+	print('SUB eax, ebx')
+	print('STORE eax,',hex(key1[i-0x221]))
 
 
 for i in range(0x2A9, 0x328+1):
 	count = count + 1
-	print('mov eax, sp')
-	print('xor ebx, ebx')
+	print('MOV eax, sp')
+	print('XOR ebx, ebx')
 	tmp = i
 	while 1==1:
 		tmp = tmp - 0xE0
-		print ('add ebx, 0xe0')
+		print ('ADD ebx, 0xe0')
 		if tmp < 0xE0:
-			print ('add ebx,' + hex(tmp))
+			print ('ADD ebx,' + hex(tmp))
 			break
-	print('sub eax, ebx')
-	print('store eax,',hex(key2[i-0x2A9]))
+	print('SUB eax, ebx')
+	print('STORE eax,',hex(key2[i-0x2A9]))
 
 	#mov     [ebp+var_5CC], 0
 
-print('mov eax, sp')
-print('xor ebx, ebx')
+print('MOV eax, sp')
+print('XOR ebx, ebx')
 tmp = 0x5CC
 while 1==1:
 	tmp = tmp - 0xE0
-	print ('add ebx, 0xe0')
+	print ('ADD ebx, 0xe0')
 	if tmp < 0xE0:
-		print ('add ebx,' + hex(tmp))
+		print ('ADD ebx,' + hex(tmp))
 		break
-print('sub eax, ebx')
-print('store eax, 0')
+print('SUB eax, ebx')
+print('STORE eax, 0')
