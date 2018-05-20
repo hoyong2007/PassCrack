@@ -24,6 +24,8 @@ Custom_CPU::Custom_CPU() {
 	reg.sp = (PR)stack_bot;
 	reg.eax = 0;
 	reg.ebx = 0;
+	reg.ecx = 0;
+	reg.edx = 0;
 }
 
 

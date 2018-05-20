@@ -10,10 +10,13 @@
 #define PUSH 0xA
 #define RET  0xFF
 
-#define EAX 0xFF
-#define EBX 0xFE
-#define PC  0xFD
-#define SP  0xFC
+
+#define PC  0xFF
+#define SP  0xFE
+#define EAX 0xFA
+#define EBX 0xFB
+#define ECX 0xFC
+#define EDX 0xFD
 
 #define BIG 0x1
 #define EQL 0x2
@@ -34,6 +37,8 @@ typedef struct reg {
 	PR sp;
 	GR eax;
 	GR ebx;
+	GR ecx;
+	GR edx;
 	FR zf;
 } REG;
 
