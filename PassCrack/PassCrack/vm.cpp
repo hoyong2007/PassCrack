@@ -16,7 +16,7 @@ Custom_CPU::Custom_CPU() {
 	stack_top = (void*)_aligned_malloc(0x2000, 4);	
 	stack_bot = (PR)((GR)stack_top + 0x2000);
 	if (stack_top == NULL) {
-		printf("Buffer allocate Error!\n");
+		//printf("Buffer allocate Error!\n");
 		exit(1);
 	}
 	// Init register
@@ -97,12 +97,12 @@ int Custom_CPU::execute(void *pe)
 			Custom_CPU::_load(arg1, arg2);
 			break;
 		case POP:
-			printf("pop???\n");
+			//printf("pop???\n");
 			arg1 = *(reg.pc++);
 			Custom_CPU::_pop(arg1);
 			break;
 		case PUSH:
-			printf("push???\n");
+			//printf("push???\n");
 			arg1 = *(reg.pc++);
 			Custom_CPU::_push(arg1);
 			break;
@@ -110,7 +110,7 @@ int Custom_CPU::execute(void *pe)
 			return 1;
 			break;
 		default:
-			printf("Something Wrong :(\n");
+			//printf("Something Wrong :(\n");
 			return 0;
 			break;
 		}

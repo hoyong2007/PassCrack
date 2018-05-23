@@ -108,7 +108,8 @@ void Custom_CPU::_add(OPERAND op1, OPERAND op2)
 			reg.pc += op2;
 		break;
 	default:
-		printf("Something Wrong in _add\n");
+		//printf("Something Wrong in _add\n");
+		break;
 	}
 }
 
@@ -219,7 +220,8 @@ void Custom_CPU::_sub(OPERAND op1, OPERAND op2)
 			reg.pc -= op2;
 		break;
 	default:
-		printf("Something Wrong in _sub\n");
+		//printf("Something Wrong in _sub\n");
+		break;
 	}
 }
 
@@ -298,7 +300,8 @@ void Custom_CPU::_xor(OPERAND op1, OPERAND op2)
 			reg.edx ^= op2;
 		break;
 	default:
-		printf("Something Wrong in _xor\n");
+		//printf("Something Wrong in _xor\n");
+		break;
 	}
 }
 
@@ -409,7 +412,7 @@ void Custom_CPU::_mov(OPERAND op1, OPERAND op2)
 			reg.pc = (PR)op2;
 		break;
 	default:
-		printf("Something Wrong in _mov\n");
+		//printf("Something Wrong in _mov\n");
 		break;
 	}
 }
@@ -551,7 +554,7 @@ void Custom_CPU::_cmp(OPERAND op1, OPERAND op2)
 void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 {
 	if (op2 == NULL) {
-		printf("Adress cannot be NULL\n");
+		//printf("Adress cannot be NULL\n");
 		return;
 	}
 
@@ -651,7 +654,7 @@ void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 			reg.pc = reg.pe + (GR)reg.pc;
 		break;
 	default :
-		printf("Something Wrong in _jmp\n");
+		//printf("Something Wrong in _jmp\n");
 		break;
 	}
 }
@@ -724,7 +727,7 @@ void Custom_CPU::_load(OPERAND op1, OPERAND op2)
 			reg.edx = *(char*)reg.pc;
 		break;
 	default:
-		printf("Something Wrong in _load\n");
+		//printf("Something Wrong in _load\n");
 		break;
 	}
 }
@@ -821,7 +824,7 @@ void Custom_CPU::_stor(OPERAND op1, OPERAND op2)
 			*(char*)reg.sp = (char)op2;
 		break;
 	default:
-		printf("Something Wrong in _stor\n");
+		//printf("Something Wrong in _stor\n");
 		break;
 	}
 }
@@ -853,7 +856,7 @@ void Custom_CPU::_push(OPERAND op1)
 		reg.sp -= 1;
 		*reg.sp = (GR)reg.pc;
 	default:
-		printf("Something Wrong in _push\n");
+		//printf("Something Wrong in _push\n");
 		break;
 	}
 }
@@ -881,7 +884,7 @@ void Custom_CPU::_pop(OPERAND op1)
 		reg.pc = (char*)*reg.sp;
 		reg.sp -= 4;
 	default:
-		printf("Something Wrong in _pop\n");
+		//printf("Something Wrong in _pop\n");
 		break;
 	}
 }
