@@ -324,7 +324,7 @@ void Custom_CPU::_mov(OPERAND op1, OPERAND op2)
 		else if (op2 == SP)
 			reg.eax = (GR)reg.sp;
 		else if (op2 == PC)
-			reg.eax = (GR)reg.pc;
+			reg.eax = 0;//(GR)reg.pc;
 		else
 			reg.eax = op2;
 		break;
@@ -559,96 +559,96 @@ void Custom_CPU::_jmp(OPERAND op1, OPERAND op2)
 	case BIG:
 		if (reg.zf == BIG) {
 			if (op2 == EAX)
-				reg.pc = (PR)reg.eax;
+				reg.pc = reg.pe + reg.eax;
 			else if (op2 == EBX)
-				reg.pc = (PR)reg.ebx;
+				reg.pc = reg.pe + reg.ebx;
 			else if (op2 == ECX)
-				reg.pc = (PR)reg.ecx;
+				reg.pc = reg.pe + reg.ecx;
 			else if (op2 == EDX)
-				reg.pc = (PR)reg.edx;
+				reg.pc = reg.pe + reg.edx;
 			else if (op2 == SP)
-				reg.pc = reg.sp;
+				reg.pc = reg.pe + (GR)reg.sp;
 			else if (op2 == PC)
-				reg.pc = reg.pc;
+				reg.pc = reg.pe + (GR)reg.pc;
 		}
 		break;
 	case EQL:
 		if (reg.zf == EQL) {
 			if (op2 == EAX)
-				reg.pc = (PR)reg.eax;
+				reg.pc = reg.pe + reg.eax;
 			else if (op2 == EBX)
-				reg.pc = (PR)reg.ebx;
+				reg.pc = reg.pe + reg.ebx;
 			else if (op2 == ECX)
-				reg.pc = (PR)reg.ecx;
+				reg.pc = reg.pe + reg.ecx;
 			else if (op2 == EDX)
-				reg.pc = (PR)reg.edx;
+				reg.pc = reg.pe + reg.edx;
 			else if (op2 == SP)
-				reg.pc = reg.sp;
+				reg.pc = reg.pe + (GR)reg.sp;
 			else if (op2 == PC)
-				reg.pc = reg.pc;
+				reg.pc = reg.pe + (GR)reg.pc;
 		}
 		break;
 	case SML:
 		if (reg.zf == SML) {
 			if (op2 == EAX)
-				reg.pc = (PR)reg.eax;
+				reg.pc = reg.pe + reg.eax;
 			else if (op2 == EBX)
-				reg.pc = (PR)reg.ebx;
+				reg.pc = reg.pe + reg.ebx;
 			else if (op2 == ECX)
-				reg.pc = (PR)reg.ecx;
+				reg.pc = reg.pe + reg.ecx;
 			else if (op2 == EDX)
-				reg.pc = (PR)reg.edx;
+				reg.pc = reg.pe + reg.edx;
 			else if (op2 == SP)
-				reg.pc = reg.sp;
+				reg.pc = reg.pe + (GR)reg.sp;
 			else if (op2 == PC)
-				reg.pc = reg.pc;
+				reg.pc = reg.pe + (GR)reg.pc;
 		}
 		break;
 	case JBE:
 		if (reg.zf == JBE) {
 			if (op2 == EAX)
-				reg.pc = (PR)reg.eax;
+				reg.pc = reg.pe + reg.eax;
 			else if (op2 == EBX)
-				reg.pc = (PR)reg.ebx;
+				reg.pc = reg.pe + reg.ebx;
 			else if (op2 == ECX)
-				reg.pc = (PR)reg.ecx;
+				reg.pc = reg.pe + reg.ecx;
 			else if (op2 == EDX)
-				reg.pc = (PR)reg.edx;
+				reg.pc = reg.pe + reg.edx;
 			else if (op2 == SP)
-				reg.pc = reg.sp;
+				reg.pc = reg.pe + (GR)reg.sp;
 			else if (op2 == PC)
-				reg.pc = reg.pc;
+				reg.pc = reg.pe + (GR)reg.pc;
 		}
 		break;
 	case JSE:
 		if (reg.zf == JSE) {
 			if (op2 == EAX)
-				reg.pc = (PR)reg.eax;
+				reg.pc = reg.pe + reg.eax;
 			else if (op2 == EBX)
-				reg.pc = (PR)reg.ebx;
+				reg.pc = reg.pe + reg.ebx;
 			else if (op2 == ECX)
-				reg.pc = (PR)reg.ecx;
+				reg.pc = reg.pe + reg.ecx;
 			else if (op2 == EDX)
-				reg.pc = (PR)reg.edx;
+				reg.pc = reg.pe + reg.edx;
 			else if (op2 == SP)
-				reg.pc = reg.sp;
+				reg.pc = reg.pe + (GR)reg.sp;
 			else if (op2 == PC)
-				reg.pc = reg.pc;
+				reg.pc = reg.pe + (GR)reg.pc;
 		}
 		break;
 	case ANW:
 		if (op2 == EAX)
-			reg.pc = (PR)reg.eax;
+			reg.pc = reg.pe + reg.eax;
 		else if (op2 == EBX)
-			reg.pc = (PR)reg.ebx;
+			reg.pc = reg.pe + reg.ebx;
 		else if (op2 == ECX)
-			reg.pc = (PR)reg.ecx;
+			reg.pc = reg.pe + reg.ecx;
 		else if (op2 == EDX)
-			reg.pc = (PR)reg.edx;
+			reg.pc = reg.pe + reg.edx;
 		else if (op2 == SP)
-			reg.pc = reg.sp;
+			reg.pc = reg.pe + (GR)reg.sp;
 		else if (op2 == PC)
-			reg.pc = reg.pc;
+			reg.pc = reg.pe + (GR)reg.pc;
 		break;
 	default :
 		printf("Something Wrong in _jmp\n");

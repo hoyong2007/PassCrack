@@ -6,15 +6,18 @@
 
 #pragma warning(disable:4996)
 
-char passwd_txt[128];
-char passwd_enc[128];
-char random_str[128];
-void *CHANGE_BYTECODE = NULL;
-void *VALIDATE_BYTECODE = NULL;
+char passwd_txt[257];
+char passwd_enc[257];
+char passwd_pst[257];
+char SELECT_BYTECODE[20000] = { 0 };
 Custom_CPU *vm;
 
-int validate_();
-char* Change_();
+void oaep_enc(char *passwd_txt, char *passwd_enc);
+void oaep_dec(char *passwd_txt, char *passwd_enc);
+void custom_table_encode(char *s);
+void encrypt(char *data, int sel);
+void decrypt(char *data, char *dst, int sel);
+
 
 int is_password_exist() // find password.txt 
 {
@@ -33,43 +36,49 @@ int is_password_exist() // find password.txt
 void load_password() //초기 암호파일 생성 
 {
 	int status;
-	char *ret = (char*)0xDEADBEEF;
+	GR ret = 0;
+	FILE *f;
 
-	memset(passwd_txt, 0, 128);
-	memset(passwd_enc, 0, 128);
+	memset(passwd_txt, 0, 257);
+	memset(passwd_enc, 0, 257);
+	memset(passwd_pst, 0, 257);
 	if (!is_password_exist()) {
-		FILE *f;
-		f = fopen("password", "w+");
+		f = fopen("password", "wb");
 		strcpy(passwd_txt, "sejong_security_2017!");
-
-		status = vm->execute(CHANGE_BYTECODE);
-		if (!status) {
-			printf("Somehing Wrong in vm\n");
-			return;
-		}
-		ret = (char*)vm->get_result();
-
-		if (ret == NULL) {
-			printf("Error on setting password\n");
-			return;
-		}
-		else {
-			printf("Set password as default passwd.\n");
-			memcpy(passwd_enc, ret, 128);
-		}
-
-		fwrite(passwd_enc, sizeof(char), 128, f);
+		custom_table_encode(passwd_txt);
+		oaep_enc(passwd_txt, passwd_enc);
+		status = vm->execute(SELECT_BYTECODE);
+		ret = vm->get_result();
+		passwd_enc[256] = (5 * (rand() % 40)) + (ret % 5);
+		encrypt(passwd_enc, passwd_enc[256]%5);
+		memcpy(passwd_pst, passwd_enc, 257);
+		fwrite(passwd_pst, sizeof(char), 257, f);
 		fclose(f);
 	}
 	else {
-		FILE *f;
-		f = fopen("password", "r");
-		fread(passwd_enc, sizeof(char), 128, f);
+		f = fopen("password", "rb");
+		fread(passwd_pst, sizeof(char), 257, f);
 		fclose(f);
 	}
 	return;
 }
 
+
+void load_bytecode()
+{
+	FILE *f;
+	char *ptr = (char*)SELECT_BYTECODE;
+	int ret, len = 0;
+	f = fopen("Select_bytecode", "rb");
+	while (1) {
+		ret = fread(ptr, 1, 1024, f);
+		if (ret <= 0)
+			break;
+		len += ret;
+		ptr = ptr + ret;
+	};
+	fclose(f);	
+}
 
 
 int auth_rule(char *s)
@@ -77,57 +86,61 @@ int auth_rule(char *s)
 	int a = 0;
 	int b = 0;
 	int c = 0;
+	int d = 0;
 
 	for (int i = 0; i<strlen(s); i++)
 	{
-		if (s[i] >= '0' && s[i] <= '9')//숫자
+		if (s[i] >= 48 && s[i] <= 57)//숫자
 			a++;
-		else if (s[i] >= 'a' && s[i] <= 'z')//영어 소문자 
+		else if (s[i] >= 97 && s[i] <= 122)//영어 소문자 
 			b++;
-		else if (s[i] >= 'A' && s[i] <= 'Z')//영어 대문자 
+		else if (s[i] >= 65 && s[i] <= 90)//영어 대문자 
 			b++;
-		else if (s[i] == '<' || s[i] == '>' || s[i] == '?' || s[i] == '!' || s[i] == '_') //특수문자 
+		else if (s[i] == 60 || s[i] == 62 || s[i] == 63 || s[i] == 33 || s[i] == 95) //특수문자 
 			c++;
+		else
+			d++;
 	}
 
-	if (a && b && c && strlen(s)>=8)
+	if (a>0 && b>0 && c>0 && d == 0 && strlen(s) >= 8)
 		return 1;
 	else
 		return 0;
 }
 
-void Validate()
-{
-	int ret;
-	int status;
-
-	memset(passwd_txt, 0, 128);
-	printf("input your password : ");
-	scanf("%128s", passwd_txt);
-	validate_();
-	status = vm->execute(VALIDATE_BYTECODE);
-	if (!status) {
-		printf("Somehing Wrong in vm\n");
-		return;
-	}
-
-	ret = vm->get_result();
-	if (ret)
-		printf("Password Correct!\n");
+int check_passwd(char *passwd) {
+	char passwd_tmp[256];
+	custom_table_encode(passwd);
+	decrypt(passwd_pst, passwd_enc, passwd_pst[256]%5);
+	oaep_dec(passwd_tmp, passwd_enc);
+	if (!memcmp(passwd, passwd_tmp, 128))
+		return 1;
 	else
-		printf("Wrong password\n");
+		return 0;
 }
 
-void Change()
+void Validate_Password()
 {
-	char *ret = (char*)0xDEADBEEF;
+	memset(passwd_txt, 0, 257);
+	printf("input your password : ");
+	scanf("%128s", passwd_txt);
+
+	if (check_passwd(passwd_txt)) 
+		printf("Password Correct!\n");
+	else
+		printf("Wrong Password\n");
+	memset(passwd_txt, 0, 257);
+}
+
+void Change_Password()
+{
+	GR ret = 1;
 	int status;
 
 	while (ret) {
-		memset(passwd_txt, 0, 128);
+		memset(passwd_txt, 0, 257);
 		printf("Input new password : ");
 		scanf("%128s", passwd_txt);
-
 		if (auth_rule(passwd_txt) == 0) {
 			printf("Try again, you must follow the making criteria\n\n");
 			printf("it is at least 8 characters long\n");
@@ -137,32 +150,29 @@ void Change()
 			passwd_txt[0] = '\0';
 			return;
 		}
-		Change_();
-		for (int i = 0; i<128; i++)
-			random_str[i] = rand() % 128;
-
-		status = vm->execute(CHANGE_BYTECODE);
-		if (!status) {
-			printf("Somehing Wrong in vm\n");
+		if (check_passwd(passwd_txt)) {
+			printf("Same password\n");
 			return;
 		}
-		ret = (char*)vm->get_result();
-		if (ret == NULL)
-			printf("Same as previous password. Enter a new password.\n");
-		else
-			printf("Password Change Complete.\n");
+		else {
+			oaep_enc(passwd_txt, passwd_enc);
+			status = vm->execute(SELECT_BYTECODE);
+			ret = vm->get_result();
+			passwd_enc[256] = (5 * (rand() % 40)) + (ret % 5);
+			encrypt(passwd_enc, passwd_enc[256]%5);
+			memcpy(passwd_pst, passwd_enc, 257);
+			break;
+		}
 	}
-	memcpy(passwd_enc, ret, 128);
 }
 
 void Quit()
 {
 	FILE *f;
 
-	f = fopen("password.txt", "w+");
+	f = fopen("password", "wb");
 
-	printf("contents : %s\n", passwd_enc);
-	fwrite(passwd_enc, sizeof(char), 128, f);
+	fwrite(passwd_pst, sizeof(char), 257, f);
 
 	fclose(f);
 	delete vm;
@@ -171,8 +181,13 @@ void Quit()
 int main()
 {
 	char cmd = 0;
-	load_password();
 	vm = new Custom_CPU();
+	load_password();
+	load_bytecode();
+	if (vm == NULL) {
+		printf("vm allocation error\n");
+		return -1;
+	}
 	srand(time(NULL));
 
 	while (cmd != 'C') {
@@ -181,15 +196,16 @@ int main()
 		printf("B. Validate Password\n");
 		printf("C. Quit\n\n");
 		printf("Enter your choice: ");
-
-		scanf("%c", &cmd);
+		cmd = 0;
+		while (cmd<'A' || cmd>'C')
+			scanf("%c", &cmd);
 
 		switch (cmd) {
 		case 'A': 
-			Change();
+			Change_Password();
 			break;
 		case 'B':
-			Validate(); 
+			Validate_Password();
 			break;
 		case 'C': 
 			Quit(); 
@@ -198,7 +214,6 @@ int main()
 			printf("Invaild Input, Try again…\n");
 			break;
 		}
-		getchar();
 	}
 	return 0;
 }

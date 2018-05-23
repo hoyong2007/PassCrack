@@ -40,6 +40,7 @@ int Custom_CPU::execute(void *pe)
 {
 	OPCODE inst;
 	OPERAND arg1 = 0, arg2 = 0;
+	int cnt = 0;
 
 	if (pe == NULL) {
 		printf("Need Bytecode\n");
@@ -47,18 +48,13 @@ int Custom_CPU::execute(void *pe)
 	}
 
 	reg.pc = (PR)pe;
+	reg.pe = (PR)pe + 3;
 	reg.sp = (PR)stack_bot;
 
-	memcpy((char*)stack_bot - 128, passwd_txt, 128);
-	reg.sp -= 128;
-	memcpy((char*)stack_bot - 128 * 2, passwd_enc, 128);
-	reg.sp -= 128;
-	memcpy((char*)stack_bot - 128 * 1, random_str, 128);
-	reg.sp -= 128;
+	memcpy((char*)stack_bot - 0x11c, passwd_enc, 128);
 
 	while (1) {
 		inst = *(reg.pc++);
-
 		switch (inst) {
 		case ADD:
 			arg1 = *(reg.pc++);
@@ -90,11 +86,23 @@ int Custom_CPU::execute(void *pe)
 			arg2 = *(reg.pc++);
 			Custom_CPU::_jmp(arg1, arg2);
 			break;
+		case STOR:
+			arg1 = *(reg.pc++);
+			arg2 = *(reg.pc++);
+			Custom_CPU::_stor(arg1, arg2);
+			break;
+		case LOAD:
+			arg1 = *(reg.pc++);
+			arg2 = *(reg.pc++);
+			Custom_CPU::_load(arg1, arg2);
+			break;
 		case POP:
+			printf("pop???\n");
 			arg1 = *(reg.pc++);
 			Custom_CPU::_pop(arg1);
 			break;
 		case PUSH:
+			printf("push???\n");
 			arg1 = *(reg.pc++);
 			Custom_CPU::_push(arg1);
 			break;

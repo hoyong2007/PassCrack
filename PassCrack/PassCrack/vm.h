@@ -8,7 +8,7 @@
 #define STOR 0x8
 #define POP  0x9
 #define PUSH 0xA
-#define RET  0xFF
+#define RET  -1
 
 
 #define PC  0xFF
@@ -29,10 +29,11 @@
 typedef unsigned int GR;	// General Register
 typedef char* PR;
 typedef char FR;			// Flag Register
-typedef unsigned int OPERAND;
+typedef unsigned char OPERAND;
 typedef char OPCODE;
 
 typedef struct reg {
+	PR pe;
 	PR pc;
 	PR sp;
 	GR eax;
